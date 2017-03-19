@@ -3,26 +3,55 @@
 // of the page.
 
 import React from 'react'
+import * as Actions from '../actions/comment'
+import { connect } from 'react-redux'
 
-export default class Room extends React.Component {
+import Comment from './comment.jsx'
+
+class Room extends React.Component {
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
-    $.ajax("/rooms/" + this.props.roomId + "/comments.json")
-      .then((data) => {
-        console.log(data)
-      })
+    this.props.fetchCommentRequest(this.props.roomId)
+  }
+
+  renderComments() {
+    return this.props.comments.map((comment) => {
+      return <Comment key={comment.id} comment={comment} />
+    });
   }
 
   render() {
     return (
       <div>
         Room #{this.props.roomId} : {this.props.roomName}
+        <div>
+          {this.renderComments()}
+        </div>
       </div>
     )
   }
 };
 Room.defaultProps = {}
 Room.propTypes = {}
+
+function mapStateToProps(state) {
+  return {
+    comments: state.comments
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchCommentRequest: (roomId) => {
+      $.ajax("/rooms/" + roomId + "/comments.json")
+        .then((data) => {
+          dispatch(Actions.fetchComments(data))
+        })
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Room)

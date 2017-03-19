@@ -8,16 +8,22 @@
 // layout file, like app/views/layouts/application.html.erb
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { createStore } from 'redux'
+import { Provider, connect } from 'react-redux';
 
 import Room from './components/room.jsx'
+import reducer from './reducers/comment'
+
+const store = createStore(reducer)
 
 $(document).on('turbolinks:load', () => {
   let $room = $('#room')
   let roomId = $room.data('room-id'),
       roomName = $room.data('room-name')
   ReactDOM.render(
-    <Room roomId={roomId} roomName={roomName}/>, $room[0]
+    <Provider store={store}>
+      <Room roomId={roomId} roomName={roomName}/>
+    </Provider>,
+    $room[0]
   );
 });
-
-console.log('I Say Hello World from Webpacker')
