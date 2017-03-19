@@ -3,5 +3,7 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :rooms
+  resources :rooms do
+    resources :comments, only: %i(create destroy index)
+  end
 end

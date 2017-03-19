@@ -4,8 +4,7 @@
   %b Name:
   = @room.name
 
-
-
+#room{ data: { room: { id: @room.id, name: @room.name } } }
 
 = link_to 'Edit', edit_room_path(@room)
 = link_to 'Back', rooms_path
