@@ -20,10 +20,13 @@ $(document).on('turbolinks:load', () => {
   let $room = $('#room')
   let roomId = $room.data('room-id'),
       roomName = $room.data('room-name')
-  ReactDOM.render(
-    <Provider store={store}>
-      <Room roomId={roomId} roomName={roomName}/>
-    </Provider>,
-    $room[0]
-  );
+
+  if($room.length > 0 ){
+    ReactDOM.render(
+      <Provider store={store}>
+        <Room roomId={roomId} roomName={roomName}/>
+      </Provider>,
+      $room[0]
+    );
+  }
 });

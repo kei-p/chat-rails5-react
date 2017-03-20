@@ -9,6 +9,7 @@ class CommentsController < ApplicationController
     @comment = @room.comments.build(comment_params)
     @comment.user = current_user
     @comment.save!
+    CommentNotifyJob.perform_now(@comment)
   end
 
   private

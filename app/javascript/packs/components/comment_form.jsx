@@ -17,6 +17,7 @@ class CommentForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     this.props.submitCommentRequest({ roomId: this.props.roomId, body: this.state.textValue })
+    this.setState({textValue: ''})
   }
 
   render () {

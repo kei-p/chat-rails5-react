@@ -6,4 +6,6 @@ Rails.application.routes.draw do
   resources :rooms do
     resources :comments, only: %i(create destroy index)
   end
+
+  mount ActionCable.server => '/cable'
 end

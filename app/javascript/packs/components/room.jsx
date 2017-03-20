@@ -16,6 +16,20 @@ class Room extends React.Component {
 
   componentDidMount() {
     this.props.fetchCommentRequest(this.props.roomId)
+    this.subceribeChannel()
+  }
+
+  subceribeChannel() {
+    App.cable.subscriptions.create({ channel: "RoomChannel", room: this.props.roomId },{
+      connected() {
+        console.log('connected')
+      },
+      received(data) {
+        console.log('received')
+        this.receiveComment(data)
+      },
+      receiveComment: this.props.receiveComment.bind(this)
+    })
   }
 
   renderComments() {
@@ -55,6 +69,9 @@ function mapDispatchToProps(dispatch) {
         .then((data) => {
           dispatch(Actions.fetchComments(data))
         })
+    },
+    receiveComment: (comment) => {
+      dispatch(Actions.receiveComment(comment))
     }
   }
 }

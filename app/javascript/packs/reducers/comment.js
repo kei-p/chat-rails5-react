@@ -9,9 +9,20 @@ export default function reducer(state = initialState, action) {
         comments: action.comments
       })
     }
-    case 'CREATE_COMMENT': {
+    case 'RECEIVE_COMMENT' : {
+      var comments = state.comments.filter( (x, i, self) => {
+        return x.id != action.comment.id;
+      });
       return Object.assign({}, state,{
-        comments: state.comments.concat(action.comment)
+        comments: comments.concat(action.comment)
+      })
+    }
+    case 'CREATE_COMMENT': {
+      var comments = state.comments.filter( (x, i, self) => {
+        return x.id != action.comment.id;
+      });
+      return Object.assign({}, state,{
+        comments: comments.concat(action.comment)
       })
     }
     default:
