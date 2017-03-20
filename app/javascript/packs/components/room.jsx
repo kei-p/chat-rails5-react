@@ -7,6 +7,7 @@ import * as Actions from '../actions/comment'
 import { connect } from 'react-redux'
 
 import Comment from './comment.jsx'
+import CommentForm from './comment_form.jsx'
 
 class Room extends React.Component {
   constructor(props) {
@@ -18,7 +19,10 @@ class Room extends React.Component {
   }
 
   renderComments() {
-    return this.props.comments.map((comment) => {
+    return this.props.comments
+      .sort((a, b) => {
+        return a.created_at > b.created_at ? 1 : -1
+      }).map((comment) => {
       return <Comment key={comment.id} comment={comment} />
     });
   }
@@ -30,6 +34,7 @@ class Room extends React.Component {
         <div>
           {this.renderComments()}
         </div>
+        <CommentForm roomId={this.props.roomId}/>
       </div>
     )
   }
