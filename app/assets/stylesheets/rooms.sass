@@ -5,3 +5,23 @@
 .comments
   height: 200px
   overflow-y: scroll
+  margin: 12px
+
+.participations
+  margin: 12px
+
+.participation
+  margin-left: 8px
+
+  &::before
+    content: ""
+    width: 10px
+    height: 10px
+    display: inline-block
+    border-radius: 50%
+    margin-right: 8px
+
+  &.is-online::before
+    background: dodgerblue
+  &.is-offline::before
+    background: gray

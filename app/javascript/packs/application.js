@@ -12,7 +12,7 @@ import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux';
 
 import Room from './components/room.jsx'
-import reducer from './reducers/comment'
+import reducer from './reducers/room'
 
 const store = createStore(reducer)
 

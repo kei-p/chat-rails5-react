@@ -3,10 +3,12 @@
 // of the page.
 
 import React from 'react'
-import * as Actions from '../actions/comment'
+import * as CommentActions from '../actions/comment'
+import * as ParticipationActions from '../actions/participation'
 import { connect } from 'react-redux'
 
-import Comment from './comment.jsx'
+import Comments from './comments.jsx'
+import Participations from './participations.jsx'
 import CommentForm from './comment_form.jsx'
 
 class Room extends React.Component {
@@ -16,11 +18,13 @@ class Room extends React.Component {
 
   componentDidMount() {
     this.props.fetchCommentRequest(this.props.roomId, this.autoScroll.bind(this))
+    this.props.fetchParticipationRequest(this.props.roomId)
     this.subceribeChannel()
+    $(document).on('turbolinks:before-visit', this.onUnload.bind(this))
   }
 
   subceribeChannel() {
-    App.cable.subscriptions.create({ channel: "RoomChannel", room: this.props.roomId },{
+    this.channel = App.cable.subscriptions.create({ channel: "RoomChannel", room: this.props.roomId },{
       connected() {
         console.log('connected')
       },
@@ -29,33 +33,34 @@ class Room extends React.Component {
         this.subscribeDispatch(data)
         this.autoScroll()
       },
+
+      leave(roomId) {
+        this.perform('leave', { room: roomId })
+      },
+
       subscribeDispatch: this.props.subscribeDispatch.bind(this),
       autoScroll: this.autoScroll.bind(this)
     })
   }
 
-  autoScroll() {
-    let $target = $('.comments')
-    let height = $target.prop('scrollHeight')
-    $target.animate({scrollTop: height}, 300)
+  onUnload() {
+    this.channel.leave(this.props.roomId)
   }
 
-  renderComments() {
-    return this.props.comments
-      .sort((a, b) => {
-        return a.created_at > b.created_at ? 1 : -1
-      }).map((comment) => {
-      return <Comment key={comment.id} comment={comment} />
-    });
+  componentWillUnmount() {
+    $(document).off('turbolinks:before-visit', this.onUnload)
+  }
+
+  autoScroll() {
+    this.refs.comments.autoScroll()
   }
 
   render() {
     return (
       <div>
         Room #{this.props.roomId} : {this.props.roomName}
-        <div className='comments'>
-          {this.renderComments()}
-        </div>
+        <Participations participations={this.props.participations}/>
+        <Comments ref='comments' comments={this.props.comments}/>
         <CommentForm roomId={this.props.roomId}/>
       </div>
     )
@@ -66,7 +71,8 @@ Room.propTypes = {}
 
 function mapStateToProps(state) {
   return {
-    comments: state.comments
+    comments: state.comment.comments,
+    participations: state.participation.participations
   }
 }
 
@@ -77,8 +83,15 @@ function mapDispatchToProps(dispatch) {
     fetchCommentRequest: (roomId, callback) => {
       $.ajax("/rooms/" + roomId + "/comments.json")
         .then((data) => {
-          dispatch(Actions.fetchComments(data))
+          dispatch(CommentActions.fetchComments(data))
           callback()
+        })
+    },
+
+    fetchParticipationRequest: (roomId) => {
+      $.ajax("/rooms/" + roomId + "/participations.json")
+        .then((data) => {
+          dispatch(ParticipationActions.fetchParticipations(data))
         })
     },
   }
