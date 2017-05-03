@@ -1,9 +1,4 @@
 %p#notice= notice
-
-%p
-  %b Name:
-  = @room.name
-
 #room{ data: { room: { id: @room.id, name: @room.name } } }
 
 = link_to 'Edit', edit_room_path(@room)

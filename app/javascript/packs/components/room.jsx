@@ -3,6 +3,7 @@
 // of the page.
 
 import React from 'react'
+import * as RoomActions from '../actions/room'
 import * as CommentActions from '../actions/comment'
 import * as ParticipationActions from '../actions/participation'
 import { connect } from 'react-redux'
@@ -17,8 +18,7 @@ class Room extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchCommentRequest(this.props.roomId, this.autoScroll.bind(this))
-    this.props.fetchParticipationRequest(this.props.roomId)
+    this.props.fetchRoomRequest(this.props.roomId, this.autoScroll.bind(this))
     this.subceribeChannel()
     $(window).on('beforeunload', this.onUnload.bind(this))
   }
@@ -60,10 +60,10 @@ class Room extends React.Component {
   render() {
     return (
       <div>
-        Room #{this.props.roomId} : {this.props.roomName}
+        Room #{this.props.roomId} : {this.props.room.name}
         <Participations participations={this.props.participations}/>
         <Comments ref='comments' comments={this.props.comments}/>
-        <CommentForm roomId={this.props.roomId}/>
+        <CommentForm roomId={this.props.roomId} onCommentFinish={this.autoScroll.bind(this)}/>
       </div>
     )
   }
@@ -73,8 +73,9 @@ Room.propTypes = {}
 
 function mapStateToProps(state) {
   return {
-    comments: state.comment.comments,
-    participations: state.participation.participations
+    room: state.room,
+    comments: state.comments,
+    participations: state.participations
   }
 }
 
@@ -82,18 +83,10 @@ function mapDispatchToProps(dispatch) {
   return {
     subscribeDispatch: (data) => { dispatch(data) },
 
-    fetchCommentRequest: (roomId, callback) => {
-      $.ajax("/rooms/" + roomId + "/comments.json")
+    fetchRoomRequest: (roomId, callback) => {
+      $.ajax("/rooms/" + roomId + ".json")
         .then((data) => {
-          dispatch(CommentActions.fetchComments(data))
-          callback()
-        })
-    },
-
-    fetchParticipationRequest: (roomId) => {
-      $.ajax("/rooms/" + roomId + "/participations.json")
-        .then((data) => {
-          dispatch(ParticipationActions.fetchParticipations(data))
+          dispatch(RoomActions.fetchRoom(data))
         })
     },
   }
