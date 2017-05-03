@@ -15,7 +15,7 @@ class Room extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchCommentRequest(this.props.roomId)
+    this.props.fetchCommentRequest(this.props.roomId, this.autoScroll.bind(this))
     this.subceribeChannel()
   }
 
@@ -27,9 +27,17 @@ class Room extends React.Component {
       received(data) {
         console.log('received')
         this.subscribeDispatch(data)
+        this.autoScroll()
       },
-      subscribeDispatch: this.props.subscribeDispatch.bind(this)
+      subscribeDispatch: this.props.subscribeDispatch.bind(this),
+      autoScroll: this.autoScroll.bind(this)
     })
+  }
+
+  autoScroll() {
+    let $target = $('.comments')
+    let height = $target.prop('scrollHeight')
+    $target.animate({scrollTop: height}, 300)
   }
 
   renderComments() {
@@ -45,7 +53,7 @@ class Room extends React.Component {
     return (
       <div>
         Room #{this.props.roomId} : {this.props.roomName}
-        <div>
+        <div className='comments'>
           {this.renderComments()}
         </div>
         <CommentForm roomId={this.props.roomId}/>
@@ -66,10 +74,11 @@ function mapDispatchToProps(dispatch) {
   return {
     subscribeDispatch: (data) => { dispatch(data) },
 
-    fetchCommentRequest: (roomId) => {
+    fetchCommentRequest: (roomId, callback) => {
       $.ajax("/rooms/" + roomId + "/comments.json")
         .then((data) => {
           dispatch(Actions.fetchComments(data))
+          callback()
         })
     },
   }

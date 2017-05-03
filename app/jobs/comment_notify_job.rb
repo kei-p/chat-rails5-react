@@ -3,13 +3,14 @@ class CommentNotifyJob < ApplicationJob
     RoomChannel.broadcast_to(
       comment.room,
       type: 'CREATE_COMMENT',
-      comment: JSON.parse(render_comment(comment))['comment']
+      comment: render_comment(comment)
     )
   end
 
   private
 
   def render_comment(comment)
-    ApplicationController.renderer.render(partial: 'comments/comment', locals: { comment: comment })
+    text = ApplicationController.renderer.render(partial: 'comments/comment', locals: { comment: comment })
+    JSON.parse(text)
   end
 end
