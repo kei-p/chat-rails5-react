@@ -16,7 +16,7 @@ import reducer from './reducers/room'
 
 const store = createStore(reducer)
 
-$(document).on('turbolinks:load', () => {
+$(document).on('ready', () => {
   let $room = $('#room')
   let roomId = $room.data('room-id'),
       roomName = $room.data('room-name')

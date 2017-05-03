@@ -9,6 +9,11 @@ export default function reducer(state = initialState, action) {
         participations: action.participations
       })
     }
+    case 'UPDATE_PARTICIPATIONS' : {
+      return Object.assign({}, state,{
+        participations: action.participations
+      })
+    }
     default:
       return state
   }

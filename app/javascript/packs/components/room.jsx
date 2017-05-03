@@ -20,7 +20,7 @@ class Room extends React.Component {
     this.props.fetchCommentRequest(this.props.roomId, this.autoScroll.bind(this))
     this.props.fetchParticipationRequest(this.props.roomId)
     this.subceribeChannel()
-    $(document).on('turbolinks:before-visit', this.onUnload.bind(this))
+    $(window).on('beforeunload', this.onUnload.bind(this))
   }
 
   subceribeChannel() {
@@ -28,6 +28,7 @@ class Room extends React.Component {
       connected() {
         console.log('connected')
       },
+
       received(data) {
         console.log('received')
         this.subscribeDispatch(data)
@@ -36,6 +37,7 @@ class Room extends React.Component {
 
       leave(roomId) {
         this.perform('leave', { room: roomId })
+        this.perform('unsubscribed')
       },
 
       subscribeDispatch: this.props.subscribeDispatch.bind(this),
@@ -48,7 +50,7 @@ class Room extends React.Component {
   }
 
   componentWillUnmount() {
-    $(document).off('turbolinks:before-visit', this.onUnload)
+    $(window).off('beforeunload', this.onUnload)
   }
 
   autoScroll() {

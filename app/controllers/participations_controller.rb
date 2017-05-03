@@ -2,7 +2,7 @@ class ParticipationsController < ApplicationController
   before_action :set_room
 
   def index
-    @participations = @room.participations.order(created_at: :desc)
+    @participations = @room.participations.order(created_at: :asc)
   end
 
   private
