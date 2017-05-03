@@ -8,6 +8,7 @@ import * as CommentActions from '../actions/comment'
 import * as ParticipationActions from '../actions/participation'
 import { connect } from 'react-redux'
 
+import ChannelSubscriber from './channel_subscriber.jsx'
 import Comments from './comments.jsx'
 import Participations from './participations.jsx'
 import CommentForm from './comment_form.jsx'
@@ -17,59 +18,27 @@ class Room extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    this.props.fetchRoomRequest(this.props.roomId, this.autoScroll.bind(this))
-    this.subceribeChannel()
-    $(window).on('beforeunload', this.onUnload.bind(this))
-  }
-
-  subceribeChannel() {
-    this.channel = App.cable.subscriptions.create({ channel: "RoomChannel", room: this.props.roomId },{
-      connected() {
-        console.log('connected')
-      },
-
-      received(data) {
-        console.log('received')
-        this.subscribeDispatch(data)
-        this.autoScroll()
-      },
-
-      leave(roomId) {
-        this.perform('leave', { room: roomId })
-        this.perform('unsubscribed')
-      },
-
-      subscribeDispatch: this.props.subscribeDispatch.bind(this),
-      autoScroll: this.autoScroll.bind(this)
-    })
-  }
-
-  onUnload() {
-    this.channel.leave(this.props.roomId)
-  }
-
-  componentWillUnmount() {
-    $(window).off('beforeunload', this.onUnload)
-  }
-
-  autoScroll() {
+  onCommentLoaded() {
     this.refs.comments.autoScroll()
+  }
+
+  onConnected() {
+    this.props.fetchRoomRequest(this.props.roomId)
   }
 
   render() {
     return (
       <div>
+        <ChannelSubscriber roomId={this.props.roomId} onConnected={this.onConnected.bind(this)} onCommentLoaded={this.onCommentLoaded.bind(this)}/>
+
         Room #{this.props.roomId} : {this.props.room.name}
         <Participations participations={this.props.participations}/>
         <Comments ref='comments' comments={this.props.comments}/>
-        <CommentForm roomId={this.props.roomId} onCommentFinish={this.autoScroll.bind(this)}/>
+        <CommentForm roomId={this.props.roomId} onCommentFinish={this.onCommentLoaded.bind(this)}/>
       </div>
     )
   }
 };
-Room.defaultProps = {}
-Room.propTypes = {}
 
 function mapStateToProps(state) {
   return {
@@ -83,7 +52,7 @@ function mapDispatchToProps(dispatch) {
   return {
     subscribeDispatch: (data) => { dispatch(data) },
 
-    fetchRoomRequest: (roomId, callback) => {
+    fetchRoomRequest: (roomId) => {
       $.ajax("/rooms/" + roomId + ".json")
         .then((data) => {
           dispatch(RoomActions.fetchRoom(data))

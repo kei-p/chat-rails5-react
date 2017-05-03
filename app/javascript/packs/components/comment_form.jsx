@@ -17,7 +17,7 @@ class CommentForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    this.props.submitCommentRequest({ roomId: this.props.roomId, body: this.state.textValue }, this.props.onCommentFinish)
+    this.props.submitCommentRequest({ roomId: this.props.roomId, body: this.state.textValue })
     this.setState({textValue: ''})
   }
 
@@ -33,7 +33,7 @@ class CommentForm extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    submitCommentRequest: (params, callback) => {
+    submitCommentRequest: (params) => {
       $.ajax({
         type: 'POST',
         dataType: 'json',
@@ -45,7 +45,6 @@ function mapDispatchToProps(dispatch) {
         }
       }).then((data) => {
         dispatch(Actions.createComment(data))
-        callback()
       })
     }
   }
