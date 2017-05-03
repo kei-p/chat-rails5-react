@@ -26,9 +26,9 @@ class Room extends React.Component {
       },
       received(data) {
         console.log('received')
-        this.receiveComment(data)
+        this.subscribeDispatch(data)
       },
-      receiveComment: this.props.receiveComment.bind(this)
+      subscribeDispatch: this.props.subscribeDispatch.bind(this)
     })
   }
 
@@ -64,15 +64,14 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    subscribeDispatch: (data) => { dispatch(data) },
+
     fetchCommentRequest: (roomId) => {
       $.ajax("/rooms/" + roomId + "/comments.json")
         .then((data) => {
           dispatch(Actions.fetchComments(data))
         })
     },
-    receiveComment: (comment) => {
-      dispatch(Actions.receiveComment(comment))
-    }
   }
 }
 

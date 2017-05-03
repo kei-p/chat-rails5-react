@@ -2,7 +2,8 @@ class CommentNotifyJob < ApplicationJob
   def perform(comment)
     RoomChannel.broadcast_to(
       comment.room,
-      JSON.parse(render_comment(comment))
+      type: 'CREATE_COMMENT',
+      comment: JSON.parse(render_comment(comment))['comment']
     )
   end
 
