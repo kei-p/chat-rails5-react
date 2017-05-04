@@ -19,11 +19,12 @@ const store = createStore(reducer)
 $(document).on('ready', () => {
   let $room = $('#room')
   let roomId = $room.data('room-id')
+  let currentUserId = $room.data('current-user-id')
 
   if($room.length > 0 ){
     ReactDOM.render(
       <Provider store={store}>
-        <Room roomId={roomId}/>
+        <Room roomId={roomId} currentUserId={currentUserId}/>
       </Provider>,
       $room[0]
     );

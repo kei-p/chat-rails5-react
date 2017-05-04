@@ -1,11 +1,37 @@
 // Place all the styles related to the Rooms controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.cf
+  *zoom: 1
+
+  &::before, &::after
+    content: " "
+    display: table
+
+  &::after
+    clear: both
 
 .comments
   height: 200px
   overflow-y: scroll
   margin: 12px
+
+.comment
+  margin-bottom: 8px
+
+  .comment__body
+    border-radius: 4px
+    padding: 4px
+    background: lightgray
+    display: inline-block
+
+  &.is-me
+    .comment__body
+      float: right
+      color: white
+      background-color: dodgerblue
+    .comment__user
+      float: right
 
 .participations
   margin: 12px
@@ -25,3 +51,15 @@
     background: dodgerblue
   &.is-offline::before
     background: gray
+
+.comment-form
+  input
+    outline: none
+    border: 1px solid lightgray
+    height: 20px
+    border-right: none
+  button
+    border: none
+    color: white
+    height: 24px
+    background: dodgerblue

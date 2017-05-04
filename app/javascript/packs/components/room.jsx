@@ -32,8 +32,8 @@ class Room extends React.Component {
         <ChannelSubscriber roomId={this.props.roomId} onConnected={this.onConnected.bind(this)} onCommentLoaded={this.onCommentLoaded.bind(this)}/>
 
         Room #{this.props.roomId} : {this.props.room.name}
-        <Participations participations={this.props.participations}/>
-        <Comments ref='comments' comments={this.props.comments}/>
+        <Participations currentUserId={this.props.currentUserId} participations={this.props.participations}/>
+        <Comments ref='comments' currentUserId={this.props.currentUserId} comments={this.props.comments}/>
         <CommentForm roomId={this.props.roomId} onCommentFinish={this.onCommentLoaded.bind(this)}/>
       </div>
     )

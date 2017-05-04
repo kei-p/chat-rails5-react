@@ -13,6 +13,7 @@ export class Participation extends React.Component {
 export default class Participations extends React.Component {
   renderParticipations() {
     return this.props.participations
+      .filter((a) => { return a.user.id != this.props.currentUserId })
       .sort((a, b) => {
         return a.created_at > b.created_at ? 1 : -1
       }).map((participation) => {
@@ -20,10 +21,23 @@ export default class Participations extends React.Component {
     });
   }
 
+  renderMe() {
+    let me = this.props.participations
+      .find((a) => { return a.user.id == this.props.currentUserId })
+    if(me != null) {
+      return <Participation key={me.id} participation={me} />
+    } else {
+      return <div/>
+    }
+  }
+
   render() {
     return (
       <div className='participations'>
-        {this.renderParticipations()}
+        <div className='participations__members'>
+          {this.renderMe()}
+          {this.renderParticipations()}
+        </div>
       </div>
     )
   }

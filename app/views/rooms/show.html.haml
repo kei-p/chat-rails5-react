@@ -1,5 +1,5 @@
 %p#notice= notice
-#room{ data: { room: { id: @room.id, name: @room.name } } }
+#room{ data: { 'room-id': @room.id, 'current-user-id': current_user.id } }
 
 = link_to 'Edit', edit_room_path(@room)
 = link_to 'Back', rooms_path
