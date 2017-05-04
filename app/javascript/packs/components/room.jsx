@@ -26,6 +26,14 @@ class Room extends React.Component {
     this.props.fetchRoomRequest(this.props.roomId, this.onCommentLoaded.bind(this))
   }
 
+  onReachScrollToTop() {
+    this.props.fetchRoomCommentRequest(this.props.roomId, this.props.comment.page + 1, this.scrollTopTo.bind(this))
+  }
+
+  scrollTopTo(comments) {
+    this.refs.comments.scrollTopTo(comments[0].id)
+  }
+
   render() {
     return (
       <div>
@@ -33,7 +41,7 @@ class Room extends React.Component {
 
         Room #{this.props.roomId} : {this.props.room.name}
         <Participations currentUserId={this.props.currentUserId} participations={this.props.participations}/>
-        <Comments ref='comments' currentUserId={this.props.currentUserId} comments={this.props.comments}/>
+        <Comments ref='comments' currentUserId={this.props.currentUserId} comments={this.props.comment.comments} onReachScrollToTop={this.onReachScrollToTop.bind(this)}/>
         <CommentForm roomId={this.props.roomId} onCommentFinish={this.onCommentLoaded.bind(this)}/>
       </div>
     )
@@ -43,8 +51,8 @@ class Room extends React.Component {
 function mapStateToProps(state) {
   return {
     room: state.room,
-    comments: state.comments,
-    participations: state.participations
+    comment: state.comment,
+    participations: state.participation.participations
   }
 }
 
@@ -88,6 +96,33 @@ function mapDispatchToProps(dispatch) {
       //   callback()
       // })
     },
+
+    fetchRoomCommentRequest: (roomId, page, callback) => {
+      let query = `
+        query($id: ID!, $page: String!) {
+          room(id: $id) {
+            id
+            name
+            comments(page: $page) {
+              id
+              body
+              created_at
+              user { id email }
+            }
+          }
+        }
+      `
+      let variables = { id: roomId, page: page }
+      $.ajax({
+        url: '/graphql', type: 'POST', data: { query: query, variables: variables }
+      }).then((response) => {
+        let comments = response.data.room.comments
+        if (comments.length > 0) {
+          dispatch(CommentActions.fetchComments(comments, page))
+          callback(comments)
+        }
+      })
+    }
   }
 }
 

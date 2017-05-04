@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import comments from './comment'
-import participations from './participation'
+import comment from './comment'
+import participation from './participation'
 
 const initialState = {
   name: ''
@@ -21,6 +21,6 @@ let room = function reducer(state = initialState, action) {
 
 export default combineReducers({
   room,
-  comments,
-  participations
+  comment,
+  participation
 })

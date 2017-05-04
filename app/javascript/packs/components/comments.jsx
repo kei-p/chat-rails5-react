@@ -5,7 +5,7 @@ export class Comment extends React.Component {
     let comment = this.props.comment
     let user = comment.user
     return (
-      <div className={'comment ' + (this.props.currentUserId == user.id ? 'is-me' : '' )  }>
+      <div id={`comment_${comment.id}`} className={'comment ' + (this.props.currentUserId == user.id ? 'is-me' : '' )  }>
         <div className='cf'>
           <div className='comment__body'>
             {comment.body}
@@ -28,6 +28,11 @@ export default class Comments extends React.Component {
     $target.animate({scrollTop: height}, 300)
   }
 
+  componentDidMount() {
+    let $target = $(this.refs.comments)
+    $target.on('scroll', this.onScroll.bind(this))
+  }
+
   renderComments() {
     return this.props.comments
       .sort((a, b) => {
@@ -35,6 +40,20 @@ export default class Comments extends React.Component {
       }).map((comment) => {
       return <Comment key={comment.id} comment={comment} currentUserId={this.props.currentUserId}/>
     });
+  }
+
+  scrollTopTo(commentId) {
+    let $target = $(this.refs.comments)
+    let $targetComment = $(`#comment_${commentId}`)
+    let base = $target.prop('scrollTop')
+    let top = $targetComment.offset().top - $targetComment.outerHeight()
+    $target.scrollTop(top - base)
+  }
+
+  onScroll() {
+    if (this.refs.comments.scrollTop <= 0) {
+      this.props.onReachScrollToTop()
+    }
   }
 
   render() {

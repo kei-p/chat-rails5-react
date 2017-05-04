@@ -38,8 +38,19 @@ module Types
     field :created_at, !types.String
     field :updated_at, !types.String
 
-    field :participations, types[ParticipationType]
-    field :comments, types[CommentType]
+    field :participations, types[ParticipationType] do
+      resolve ->(obj, args, ctx) { obj.participations.includes(:user).order(created_at: :desc) }
+    end
+
+    field :comments, types[CommentType] do
+      argument :per, types.String, default_value: '10'
+      argument :page, types.String, default_value: '1'
+
+      resolve ->(obj, args, ctx) {
+        obj.comments.includes(:user).order('comments.created_at DESC, comments.id DESC')
+          .page(args[:page].to_i).per(args[:per].to_i)
+      }
+    end
   end
 
   QueryType = GraphQL::ObjectType.define do
@@ -48,7 +59,8 @@ module Types
     field :room do
       type RoomType
       argument :id, !types.ID
-      resolve -> (obj, args, ctx) { Room.find(args['id']) }
+
+      resolve ->(obj, args, ctx) { Room.find(args[:id]) }
     end
   end
 end
