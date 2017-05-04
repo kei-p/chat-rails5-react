@@ -34,18 +34,29 @@ class CommentForm extends React.Component {
 function mapDispatchToProps(dispatch) {
   return {
     submitCommentRequest: (params) => {
+      let query = "mutation{ addComment(input: {"
+        + `roomId: ${params.roomId}`
+        + `body: "${params.body}"`
+        + "}){id body created_at user{id email}}}"
       $.ajax({
-        type: 'POST',
-        dataType: 'json',
-        url: "/rooms/" + params.roomId + "/comments.json",
-        data: {
-          comment: {
-            body: params.body
-          }
-        }
-      }).then((data) => {
-        dispatch(Actions.createComment(data))
+        url: '/graphql', type: 'POST', data: { query: query }
+      }).then((response) => {
+        let comment = response.data.addComment
+        dispatch(Actions.createComment(comment))
       })
+      // API
+      // $.ajax({
+      //   type: 'POST',
+      //   dataType: 'json',
+      //   url: "/rooms/" + params.roomId + "/comments.json",
+      //   data: {
+      //     comment: {
+      //       body: params.body
+      //     }
+      //   }
+      // }).then((data) => {
+      //   dispatch(Actions.createComment(data))
+      // })
     }
   }
 }

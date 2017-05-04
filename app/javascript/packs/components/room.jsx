@@ -23,7 +23,7 @@ class Room extends React.Component {
   }
 
   onConnected() {
-    this.props.fetchRoomRequest(this.props.roomId)
+    this.props.fetchRoomRequest(this.props.roomId, this.onCommentLoaded.bind(this))
   }
 
   render() {
@@ -52,11 +52,24 @@ function mapDispatchToProps(dispatch) {
   return {
     subscribeDispatch: (data) => { dispatch(data) },
 
-    fetchRoomRequest: (roomId) => {
-      $.ajax("/rooms/" + roomId + ".json")
-        .then((data) => {
-          dispatch(RoomActions.fetchRoom(data))
-        })
+    fetchRoomRequest: (roomId, callback) => {
+      let query = "query{room("
+        + `id: ${roomId}`
+        + "){id name participations{id online user{id email}} comments{id body created_at user{id email}}}}"
+      $.ajax({
+        url: '/graphql', type: 'POST', data: { query: query }
+      }).then((response) => {
+        let room = response.data.room
+        dispatch(RoomActions.fetchRoom(room))
+        callback()
+      })
+      // API
+      // $.ajax(
+      //   "/rooms/" + roomId + ".json"
+      // ).then((data) => {
+      //   dispatch(RoomActions.fetchRoom(data))
+      //   callback()
+      // })
     },
   }
 }

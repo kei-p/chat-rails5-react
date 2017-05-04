@@ -71,6 +71,9 @@ GEM
     ffi (1.9.18)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    graphiql-rails (1.4.1)
+      rails
+    graphql (1.5.10)
     haml (4.0.7)
       tilt
     haml-rails (0.9.0)
@@ -191,6 +194,8 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.2)
   devise
+  graphiql-rails
+  graphql
   haml-rails
   jbuilder (~> 2.5)
   jquery-rails
