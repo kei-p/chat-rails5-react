@@ -34,12 +34,19 @@ class CommentForm extends React.Component {
 function mapDispatchToProps(dispatch) {
   return {
     submitCommentRequest: (params) => {
-      let query = "mutation{ addComment(input: {"
-        + `roomId: ${params.roomId}`
-        + `body: "${params.body}"`
-        + "}){id body created_at user{id email}}}"
+      let query = `
+        mutation($roomId: ID!, $body: String!) {
+          addComment(input: { roomId: $roomId, body: $body}) {
+            id
+            body
+            created_at
+            user { id email }
+          }
+        }
+      `
+      let variables = params
       $.ajax({
-        url: '/graphql', type: 'POST', data: { query: query }
+        url: '/graphql', type: 'POST', data: { query: query, variables: params }
       }).then((response) => {
         let comment = response.data.addComment
         dispatch(Actions.createComment(comment))

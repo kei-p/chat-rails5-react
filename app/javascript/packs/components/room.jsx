@@ -53,11 +53,28 @@ function mapDispatchToProps(dispatch) {
     subscribeDispatch: (data) => { dispatch(data) },
 
     fetchRoomRequest: (roomId, callback) => {
-      let query = "query{room("
-        + `id: ${roomId}`
-        + "){id name participations{id online user{id email}} comments{id body created_at user{id email}}}}"
+      let query = `
+        query($id: ID!) {
+          room(id: $id) {
+            id
+            name
+            participations {
+              id
+              online
+              user { id email }
+            }
+            comments {
+              id
+              body
+              created_at
+              user { id email }
+            }
+          }
+        }
+      `
+      let variables = { id: roomId }
       $.ajax({
-        url: '/graphql', type: 'POST', data: { query: query }
+        url: '/graphql', type: 'POST', data: { query: query, variables: variables }
       }).then((response) => {
         let room = response.data.room
         dispatch(RoomActions.fetchRoom(room))
