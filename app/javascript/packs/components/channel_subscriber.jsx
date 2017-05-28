@@ -33,11 +33,6 @@ export class ChannelSubscriber extends React.Component {
         }
       },
 
-      leave(roomId) {
-        this.perform('leave', { room: roomId })
-        this.perform('unsubscribed')
-      },
-
       onCommentLoaded: this.props.onCommentLoaded,
       onConnected: this.props.onConnected,
       subscribeDispatch: this.props.subscribeDispatch.bind(this)
@@ -58,7 +53,7 @@ export class ChannelSubscriber extends React.Component {
   }
 
   onUnload() {
-    this.state.channel.leave(this.props.roomId)
+    this.state.channel.unsubscribed()
   }
 
   render() {

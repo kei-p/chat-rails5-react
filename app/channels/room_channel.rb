@@ -6,13 +6,9 @@ class RoomChannel < ApplicationCable::Channel
     broadcast_update_participation
   end
 
-  def leave
-    set_room
+  def unsubscribed
     current_user.leave(@room)
     broadcast_update_participation
-  end
-
-  def unsubscribed
   end
 
   private
