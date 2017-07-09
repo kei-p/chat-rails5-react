@@ -61,40 +61,7 @@ function mapDispatchToProps(dispatch) {
     subscribeDispatch: (data) => { dispatch(data) },
 
     fetchRoomRequest: (roomId, callback) => {
-      let query = `
-        query($id: ID!) {
-          room(id: $id) {
-            id
-            name
-            participations {
-              id
-              online
-              user { id email }
-            }
-            comments {
-              id
-              body
-              created_at
-              user { id email }
-            }
-          }
-        }
-      `
-      let variables = { id: roomId }
-      $.ajax({
-        url: '/graphql', type: 'POST', data: { query: query, variables: variables }
-      }).then((response) => {
-        let room = response.data.room
-        dispatch(RoomActions.fetchRoom(room))
-        callback()
-      })
-      // API
-      // $.ajax(
-      //   "/rooms/" + roomId + ".json"
-      // ).then((data) => {
-      //   dispatch(RoomActions.fetchRoom(data))
-      //   callback()
-      // })
+      dispatch(RoomActions.fetchRoom(roomId, callback))
     },
 
     fetchRoomCommentRequest: (roomId, page, callback) => {

@@ -1,13 +1,19 @@
 import WebpackerReact from 'webpacker-react'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from "redux-saga";
 import { Provider, connect } from 'react-redux'
 
 import Room from './components/room.jsx'
 import reducer from './reducers/room'
+import saga from './sagas/room'
 
-const store = createStore(reducer)
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(
+  reducer,
+  applyMiddleware(sagaMiddleware)
+)
 
 class Root extends React.Component {
   render() {
@@ -19,4 +25,5 @@ class Root extends React.Component {
   }
 }
 
+sagaMiddleware.run(saga)
 WebpackerReact.setup({Root})

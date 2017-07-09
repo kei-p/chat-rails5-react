@@ -4,7 +4,7 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch(action.type) {
-    case 'FETCH_ROOM' : {
+    case 'FETCHED_ROOM' : {
       return Object.assign({}, state,{
         participations: action.room.participations
       })

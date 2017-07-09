@@ -8,7 +8,7 @@ const initialState = {
 
 let room = function reducer(state = initialState, action) {
   switch(action.type) {
-    case 'FETCH_ROOM' : {
+    case "FETCHED_ROOM" : {
       return Object.assign({}, state,{
         name: action.room.name
       })
