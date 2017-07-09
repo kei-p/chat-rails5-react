@@ -10,23 +10,21 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux';
+import WebpackerReact from 'webpacker-react'
 
 import Room from './components/room.jsx'
 import reducer from './reducers/room'
 
 const store = createStore(reducer)
 
-$(document).on('ready', () => {
-  let $room = $('#room')
-  let roomId = $room.data('room-id')
-  let currentUserId = $room.data('current-user-id')
-
-  if($room.length > 0 ){
-    ReactDOM.render(
+class Root extends React.Component {
+  render() {
+    return (
       <Provider store={store}>
-        <Room roomId={roomId} currentUserId={currentUserId}/>
-      </Provider>,
-      $room[0]
-    );
+        <Room roomId={this.props.room_id} currentUserId={this.props.current_user_id}/>
+      </Provider>
+    )
   }
-});
+}
+
+WebpackerReact.setup({Root})
