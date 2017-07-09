@@ -10,7 +10,7 @@ export class ChannelSubscriber extends React.Component {
   }
 
   subceribeChannel() {
-    return App.cable.subscriptions.create({ channel: "RoomChannel", room: this.props.roomId },{
+    return App.cable.subscriptions.create({ channel: "RoomChannel", room_id: this.props.roomId },{
       connected() {
         console.log('connected')
         this.onConnected()
